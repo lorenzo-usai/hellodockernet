@@ -1,0 +1,5 @@
+#ignore everything...
+**
+
+#...but the JAR file
+!target/*-jar-with-dependencies.jar

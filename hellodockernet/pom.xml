@@ -64,6 +64,28 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptorRefs>jar-with-dependencies</descriptorRefs>
+							<archive>
+								<manifest>
+									<mainClass>com.examples.hellodockernet.SimpleMongoApp</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 
 	<profiles>
@@ -76,17 +98,45 @@
 						<artifactId>docker-maven-plugin</artifactId>
 						<version>0.34.1</version>
 						<configuration>
-							<showLogs>true</showLogs>
-							<verbose>build</verbose>
+							<autoCreateCustomNetworks>true</autoCreateCustomNetworks>
 							<images>
 								<image>
-									<name>java-docker-net</name>
+									<name>java-mongo-hello-world</name>
 									<build>
 										<contextDir>${project.basedir}</contextDir>
-										<args>
-											<jarToCopy>${project.artifactId}-${project.version}.jar</jarToCopy>
-										</args>
 									</build>
+									<run>
+										<network>
+											<mode>custom</mode>
+											<name>my-network</name>
+										</network>
+										<wait>
+											<log>Hello World!</log>
+											<time>10000</time>
+										</wait>
+										<dependsOn>
+											<container>mongo</container>
+										</dependsOn>
+									</run>
+								</image>
+								<image>
+									<name>mongo:4.4.3</name>
+									<alias>mongo</alias>
+									<run>
+										<network>
+											<mode>custom</mode>
+											<name>my-network</name>
+											<alias>mongodb</alias>
+										</network>
+										<wait>
+											<tcp>
+												<ports>
+													<port>27017</port>
+												</ports>
+											</tcp>
+											<time>10000</time>
+										</wait>
+									</run>
 								</image>
 							</images>
 						</configuration>
