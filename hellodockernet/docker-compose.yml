@@ -14,4 +14,4 @@ services:
 
 networks:
   my-network:
-    diver: bridge
+    driver: bridge
